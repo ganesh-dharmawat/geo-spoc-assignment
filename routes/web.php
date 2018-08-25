@@ -15,6 +15,9 @@ Route::get('/','CandidateController@index' );
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('manage',array('uses' => 'UserController@getManageView'));
+Route::get('view/{userInfo}',array('uses' => 'UserController@getView'));
+Route::get('listing',array('uses' => 'UserController@getListing'));
 Route::resource('users', 'UserController');
 Route::resource('candidate', 'CandidateController');
 Route::get('my-captcha', 'HomeController@myCaptcha')->name('myCaptcha');
