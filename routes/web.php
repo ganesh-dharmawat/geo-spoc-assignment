@@ -11,6 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','CandidateController@index' );
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('users', 'UserController');
+Route::resource('candidate', 'CandidateController');
+Route::get('my-captcha', 'HomeController@myCaptcha')->name('myCaptcha');
+Route::post('my-captcha', 'HomeController@myCaptchaPost')->name('myCaptcha.post');
+Route::get('refresh_captcha', 'HomeController@refreshCaptcha')->name('refresh_captcha');
