@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Candidate;
 use App\Http\Requests\Candidate\StoreCandidateInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,9 @@ class CandidateController extends Controller
      */
     public function index()
     {
+        if(Auth::check()){
+            return redirect('/home');
+        }
         return view("candidate.index");
     }
 
@@ -71,7 +75,7 @@ class CandidateController extends Controller
      */
     public function show(Candidate $candidate)
     {
-        //
+        return view('candidate.candidate-info')->with(compact('candidate'));
     }
 
     /**
@@ -82,7 +86,7 @@ class CandidateController extends Controller
      */
     public function edit(Candidate $candidate)
     {
-        //
+
     }
 
     /**
@@ -94,7 +98,13 @@ class CandidateController extends Controller
      */
     public function update(Request $request, Candidate $candidate)
     {
-        //
+        request()->validate(['rate' => 'required']);
+        $candidate = Candidate::find($candidate->id);
+        $rating = new \willvincent\Rateable\Rating;
+        $rating->rating = $request->rate;
+        $rating->user_id = auth()->user()->id;
+        $candidate->ratings()->save($rating);
+        return redirect()->back();
     }
 
     /**

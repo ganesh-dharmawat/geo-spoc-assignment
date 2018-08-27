@@ -25,8 +25,8 @@
                                     <th> Actions </th>
                                 </tr>
                                 <tr>
-                                    <th> <input class="form-control form-filter" name="search_name" id="search_name" type="text"> </th>
-                                    <th> <input class="form-control form-filter" name="search_email" id="search_email" type="text"> </th>
+                                    <th> <input class="form-control form-filter" name="candidate_name" id="candidate_name" type="text"> </th>
+                                    <th> <input class="form-control form-filter" name="candidate_email" id="candidate_email" type="text"> </th>
                                     <th>  </th>
                                     <th>  </th>
                                     <th>  </th>
@@ -51,29 +51,33 @@
 @section('scripts')
     <script>
     $(document).ready(function() {
-        $("input[name='search_name']").on('keyup',function(){
-            var search_name = $('#search_name').val();
-            $("input[name='search_name']").val(search_name);
+        $("input[name='candidate_email']").on('keyup',function(){
+            var candidate_email = $('#candidate_email').val();
+            $("input[name='candidate_email']").val(candidate_email);
             $(".filter-submit").trigger('click');
         });
-        $("input[name='search_email']").on('keyup',function(){
-            var search_email = $('#search_email').val();
-            $("input[name='search_email']").val(search_email);
+        $("input[name='candidate_name']").on('keyup',function(){
+            var candidate_name = $('#candidate_name').val();
+            $("input[name='candidate_name']").val(candidate_name);
             $(".filter-submit").trigger('click');
         });
-            var oTable3 = $('#userTable').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "searching":true,
-                "ajax": {
-                    "url": "/listing", // json datasource
-                    type: "get",  // method  , by default get
-                    error: function () {  // error handling
+        var oTable3 = $('#userTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching":true,
+            bFilter: true,
+            "ajax": {
+                "url": "/listing",
+                "data": function ( d ) {
+                    d.search_name = $('#candidate_name').val();
+                    d.search_email = $('#candidate_email').val();
+                },
+                type: "get",  // method  , by default get
+                error: function () {  // error handling
 
-                        }
                     }
-             });
-
+                }
+         });
     } );
     </script>
 @endsection

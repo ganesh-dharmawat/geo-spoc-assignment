@@ -161,6 +161,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         //User verification provider
         Jrean\UserVerification\UserVerificationServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+        willvincent\Rateable\RateableServiceProvider::class
 
     ],
 
@@ -211,6 +213,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'UserVerification' => Jrean\UserVerification\Facades\UserVerification::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
 
     ],
 

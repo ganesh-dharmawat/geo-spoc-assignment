@@ -3,10 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use willvincent\Rateable\Rateable;
 
 class Candidate extends Model
 {
-
+    use Rateable;
     protected $table = 'candidate_info';
     /**
      * The attributes that are mass assignable.

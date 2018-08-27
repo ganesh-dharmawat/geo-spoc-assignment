@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Candidate;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class UserController extends Controller
 {
@@ -89,12 +91,12 @@ class UserController extends Controller
         try{
             $userInfoIds = Candidate::pluck('id')->toArray();
             $filterFlag = true;
-            if($request->has('search_name')  && $filterFlag) {
+            if($request->has('search_name')  && $filterFlag && !empty ( $request->search_name )) {
                 $userInfoIds = Candidate::where('name','like','%'.$request['search_name'].'%')->whereIn('id',$userInfoIds)->pluck('id')->toArray();
                 if(count($userInfoIds) <= 0){
                     $filterFlag = false;
                 }
-            }elseif($request->has('search_email') && $filterFlag){
+            }elseif($request->has('search_email') && $filterFlag && !empty ( $request->search_email )){
                 $userInfoIds = Candidate::where('email','like','%'.$request['search_email'].'%')->whereIn('id',$userInfoIds)->pluck('id')->toArray();
                 if(count($userInfoIds) <= 0){
                     $filterFlag = false;
@@ -112,12 +114,17 @@ class UserController extends Controller
                     $userInfoData[$pagination]->url,
                     $like_working,
                     date('d M Y',strtotime($userInfoData[$pagination]['created_at'])),
-                    '<div class="btn btn-primary">
-                        <a href="/users/'.$userInfoData[$pagination]->id.'" style="color: white">
+                    '<span class="btn btn-primary">
+                        <a href=/candidate/'.$userInfoData[$pagination]->id.' style="color: white">
                             View
                         </a>
-                    </div>'
-
+                    </span>
+                    <span class="btn btn-primary">
+                        <a href="/pdf/'.$userInfoData[$pagination]->id.'" style="color: white" target="_blank">
+                            PDF View
+                        </a>
+                    </span>
+                    ',
                 ];
             }
             $records["draw"] = intval($request->draw);
@@ -134,5 +141,11 @@ class UserController extends Controller
             abort(500);
         }
         return response()->json($records,200);
+    }
+
+    public function pdfStream(Request $request,$id){
+        $userInfo = Candidate::find($id);
+        $pdf = PDF::loadView('candidate.candidate-info-pdf', compact('userInfo'));
+        return $pdf->stream('candidate-info-pdf.pdf');
     }
 }
