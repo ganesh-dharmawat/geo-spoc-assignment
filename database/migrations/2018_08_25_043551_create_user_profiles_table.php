@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCandidateInfoTable extends Migration
+class CreateUserProfilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class CreateCandidateInfoTable extends Migration
      */
     public function up()
     {
-        Schema::create('candidate_info', function (Blueprint $table) {
+        Schema::create('user_profiles', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('user_id');
+
             $table->string('name');
             $table->text('url')->nullable();
             $table->string('email')->unique();
@@ -23,6 +25,7 @@ class CreateCandidateInfoTable extends Migration
             $table->boolean('like_working')->nullable();
             $table->string('ip')->nullable();
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -33,6 +36,6 @@ class CreateCandidateInfoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('candidate_info');
+        Schema::dropIfExists('user_profiles');
     }
 }

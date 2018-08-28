@@ -23,7 +23,7 @@
                 <div class="card card-default">
                     <div class="card-header">{{ __('Candidate Info') }}</div>
                     <div class="card-body">
-                        <form role="form" class="form-horizontal" method="post" action="{{ route('candidate.store') }}" enctype="multipart/form-data">
+                        <form role="form" class="form-horizontal" method="post" action="{{ route('userprofile.store') }}" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="name" class="col-md-4 control-label">Full Name</label>
@@ -63,9 +63,9 @@
                                         <textarea id="cover_letter" class="form-control {{ $errors->has('cover_letter') ? ' is-invalid' : '' }}" name="cover_letter"  autofocus>
                                             {{ old('cover_letter') }}
                                         </textarea>
-                                        @if ($errors->has('cover_letter'))
-                                            <span role="alert" class="invalid-feedback"><strong>{{ $errors->first('cover_letter') }}</strong></span>
-                                        @endif
+                                    @if ($errors->has('cover_letter'))
+                                        <span role="alert" class="invalid-feedback"><strong>{{ $errors->first('cover_letter') }}</strong></span>
+                                    @endif
                                 </div>
                             </div>
 

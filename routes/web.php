@@ -11,16 +11,15 @@
 |
 */
 
-Route::get('/','CandidateController@index' );
+Route::get('/','UserProfileController@index' );
 Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'UserProfileController@index')->name('home');
 Route::get('manage',array('uses' => 'UserController@getManageView'));
 Route::get('view/{userInfo}',array('uses' => 'UserController@getView'));
 Route::get('listing',array('uses' => 'UserController@getListing'));
 Route::get('/pdf/{userInfo}', 'UserController@pdfStream')->name('pdfStream');
 Route::resource('users', 'UserController');
-Route::resource('candidate', 'CandidateController');
+Route::resource('userprofile', 'UserProfileController');
 Route::get('my-captcha', 'HomeController@myCaptcha')->name('myCaptcha');
 Route::post('my-captcha', 'HomeController@myCaptchaPost')->name('myCaptcha.post');
 Route::get('refresh_captcha', 'HomeController@refreshCaptcha')->name('refresh_captcha');

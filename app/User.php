@@ -2,12 +2,13 @@
 
 namespace App;
 
+use Actuallymab\LaravelComment\CanComment;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable,CanComment;
 
     protected $table = "users";
     /**
@@ -27,4 +28,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Get the phone record associated with the user.
+     */
+    public function userprofile()
+    {
+        return $this->hasOne('App\UserProfile');
+    }
 }

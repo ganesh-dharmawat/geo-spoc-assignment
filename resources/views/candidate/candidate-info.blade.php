@@ -17,7 +17,7 @@
                                 <label for="name" class="control-label">Name</label>
                             </div>
                             <div class="col-md-6">
-                                <span>{!! $candidate['name'] !!}</span>
+                                <span>{!! $userProfile['name'] !!}</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -25,7 +25,7 @@
                                 <label for="email" class="control-label">Email</label>
                             </div>
                             <div class="col-md-6">
-                                <span>{!! $candidate->email !!}</span>
+                                <span>{!! $userProfile->email !!}</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -33,7 +33,7 @@
                                 <label for="email" class="control-label">Web Address</label>
                             </div>
                             <div class="col-md-6">
-                                <span><a href='{!! $candidate->url !!}'>{!! $candidate->url !!}</a></span>
+                                <span><a href='{!! $userProfile->url !!}'>{!! $userProfile->url !!}</a></span>
                             </div>
                         </div>
 
@@ -42,7 +42,7 @@
                                 <label for="cover_letter" class="control-label">Cover Letter</label>
                             </div>
                             <div class="col-md-6">
-                                <span>{!! $candidate->cover_letter !!}</span>
+                                <span>{!! $userProfile->cover_letter !!}</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -50,7 +50,7 @@
                                 <label for="ip" class="control-label">IP Address</label>
                             </div>
                             <div class="col-md-6">
-                                <span>{!! $candidate->ip !!}</span>
+                                <span>{!! $userProfile->ip !!}</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -59,20 +59,40 @@
                             </div>
                             <div class="col-md-6">
                                 <span class="btn btn-primary">
-                                <a href={!! $candidate->attachment !!} style="color:white" target="_blank">
+                                <a href={!! $userProfile->attachment !!} style="color:white" target="_blank">
                                     View
                                 </a>
                                 </span>
                             </div>
                         </div>
-                        <form role="form" class="form-horizontal" method="post" action="{!! $candidate->id !!}" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <div class="col-md-3" style="text-align: right">
+                                <label class="control-label">Comments</label>
+                            </div>
+                            <div class="col-md-6">
+                                @foreach($comments as $comment)
+                                    <div> {{$comment['comment']}} </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @if(Auth::user()->id != $userProfile->user_id)
+                        <form role="form" class="form-horizontal" method="post" action="{!! $userProfile->id !!}" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <input name="_method" type="hidden" value="PUT">
                             <div class="form-group row">
-                                <label for="name" class="col-md-3 control-label">Rating</label>
+                                <label for="name" class="col-md-3 control-label">Average star Rating</label>
                                 <div class="col-md-6">
-                                    <input id="input-1" name="rate" class="rating rating-loading" data-min="0" data-max="5" data-step="1" value="{{ $candidate->averageRating }}" data-size="xs">
+                                    <input id="input-1" name="rate" class="rating rating-loading" data-min="0" data-max="5" data-step="1" value="{{ $userProfile->averageRating }}" data-size="xs">
 
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="comments" class="col-md-4 control-label">Add Comments</label>
+
+                                <div class="col-md-6">
+                                        <textarea id="comments" class="form-control " name="comments"  autofocus>
+
+                                        </textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -83,6 +103,7 @@
                                 </div>
                             </div>
                         </form>
+                            @endif
                     </div>
                 </div>
             </div>

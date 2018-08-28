@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Candidate;
-use App\Http\Requests\Candidate\StoreCandidateInfo;
+use App\User;
+use App\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-class CandidateController extends Controller
+class UserProfileController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @param
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware(['auth','isVerified']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,10 +29,8 @@ class CandidateController extends Controller
      */
     public function index()
     {
-        if(Auth::check()){
-            return redirect('/home');
-        }
-        return view("candidate.index");
+        $user = User::with('userprofile')->where('id',Auth::user()->id)->first();
+        return view("users.index")->with(compact('user'));
     }
 
     /**
@@ -32,7 +40,7 @@ class CandidateController extends Controller
      */
     public function create()
     {
-        //
+        return view("users.create");
     }
 
     /**
@@ -41,7 +49,7 @@ class CandidateController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCandidateInfo $request)
+    public function store(Request $request)
     {
         try{
             $file = $request->attachment;
@@ -52,54 +60,59 @@ class CandidateController extends Controller
             $candidateInfo['like_working'] = ($request['like_working'] == 'on') ? true : false;
             $candidateInfo['attachment'] = $disk->url($path);
             $candidateInfo['ip'] = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
-            Candidate::create($candidateInfo);
+            $candidateInfo['user_id'] = Auth::user()->id;
+            UserProfile::create($candidateInfo);
             $request->session()->flash('alert-success', 'Candidate Info successfully added!');
             return redirect('/');
         }catch(\Exception $e){
             $data = [
-            'action' => 'Save Candidate Info',
-            'params' => $request->all(),
-            'exception' => $e->getMessage()
+                'action' => 'Save Candidate Info',
+                'params' => $request->all(),
+                'exception' => $e->getMessage()
             ];
             Log::critical(json_encode($data));
             abort(500);
         }
-
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Candidate  $candidate
+     * @param  \App\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
-    public function show(Candidate $candidate)
+    public function show(UserProfile $userProfile,$id)
     {
-        return view('candidate.candidate-info')->with(compact('candidate'));
+        $userProfile = UserProfile::where('id',$id)->first();
+        $comments = $userProfile->comments()->get();
+        return view('candidate.candidate-info')->with(compact('userProfile','comments'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Candidate  $candidate
+     * @param  \App\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
-    public function edit(Candidate $candidate)
+    public function edit(UserProfile $userProfile)
     {
-
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Candidate  $candidate
+     * @param  \App\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Candidate $candidate)
+    public function update(Request $request, UserProfile $userProfile,$id)
     {
         request()->validate(['rate' => 'required']);
-        $candidate = Candidate::find($candidate->id);
+        $candidate = UserProfile::find($id);
+        $user = User::find(Auth::user()->id);
+        $product = UserProfile::find($id);
+        $user->comment($product, $request->comments, 3);
         $rating = new \willvincent\Rateable\Rating;
         $rating->rating = $request->rate;
         $rating->user_id = auth()->user()->id;
@@ -110,10 +123,10 @@ class CandidateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Candidate  $candidate
+     * @param  \App\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Candidate $candidate)
+    public function destroy(UserProfile $userProfile)
     {
         //
     }
