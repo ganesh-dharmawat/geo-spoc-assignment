@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -35,5 +36,22 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->verified != 1) {
+            $this->guard()->logout();
+            $request->session()->flash('alert-warning', 'Your account is not verified, please follow the instructions sent to your email address! If you cannot find it please check your \'Junk\' folder.');
+            return redirect('/login');
+        }else{
+            return redirect()->intended($this->redirectPath());
+        }
     }
 }
